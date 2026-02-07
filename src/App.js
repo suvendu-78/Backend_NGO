@@ -1,66 +1,56 @@
 import express from "express";
-import dotenv from "dotenv";
 import cors from "cors";
-import { User } from "./Module/module.js";
-import { router } from "./Router/Router.js";
-
-// 🔥 Clerk Import
-import { ClerkExpressRequireAuth } from "@clerk/express";
+import dotenv from "dotenv";
+import { clerkMiddleware, requireAuth } from "@clerk/express";
 
 dotenv.config();
 
-const App = express();
+const app = express();
 
-App.use(
+app.use(
   cors({
     origin: "http://localhost:5173",
-    methods: ["GET", "POST", "DELETE"],
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
   }),
 );
 
-App.use(express.json({ limit: "10kb" }));
-App.use(express.urlencoded({ extended: true }));
-App.use(express.static("public"));
+app.use(express.json({ limit: "10kb" }));
 
-// ========================
-// PUBLIC ROUTES
-// ========================
+app.use(clerkMiddleware());
+import { router } from "./Router/Router.js";
+app.use("/api/v1/user", router);
 
-App.use("/api/v1/user", router);
-
-// Example public route
-App.get("/", (req, res) => {
-  res.send("Backend running with Clerk 🚀");
+app.get("/", (req, res) => {
+  res.json({
+    success: true,
+    message: "Backend running with Clerk 🚀",
+  });
 });
 
-// ========================
-// 🔐 PROTECTED ADMIN ROUTES (CLERK)
-// ========================
+app.get("/api/protected", requireAuth(), (req, res) => {
+  res.json({
+    success: true,
+    message: "You are authenticated",
+    userId: req.auth.userId,
+  });
+});
 
-App.get("/admin-data", ClerkExpressRequireAuth(), async (req, res) => {
+app.get("/api/admin/books", requireAuth(), async (req, res) => {
   try {
-    const users = await User.find();
+    const userId = req.auth.userId;
+
     res.json({
-      message: "Protected admin data 👑",
-      users,
+      success: true,
+      message: "Admin Books Route",
+      userId,
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 });
 
-// ========================
-// GET ALL USERS (OPTIONAL PROTECTED)
-// ========================
-
-App.get("/getuser", ClerkExpressRequireAuth(), async (req, res) => {
-  try {
-    const users = await User.find();
-    res.json(users);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-export default App;
+export default app;
