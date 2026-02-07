@@ -1,6 +1,8 @@
 import Async from "../Utils/Async.js";
 import ApiError from "../Utils/Apierror.js";
 import { User } from "../Module/module.js";
+import Apiresponse from "../Utils/Apiresponce.js";
+
 const Register = Async(async (req, res, next) => {
   const { fullName, Email, Mobile, Password } = req.body;
   if (!fullName) {
@@ -26,13 +28,12 @@ const Register = Async(async (req, res, next) => {
     throw new ApiError(404, "user is allready exist!");
   }
   const user = await User.create({
-    FullName: FullName.toLowerCase(),
+    fullName: fullName.toLowerCase(),
     Password,
     Email,
-    MobileNumber,
-    MeterId,
+    Mobile,
   });
-
+  console.log(user);
   const CreatedUser = await User.findById(user._id).select(
     "-Password -refreshToken",
   );
@@ -46,4 +47,52 @@ const Register = Async(async (req, res, next) => {
   // return res.status(200).json(req.body)
 });
 
-export { Register };
+const Login = Async(async (req, res) => {
+  const { Email, Password } = req.body;
+
+  console.log(Email, Password);
+
+  if (!Email) {
+    throw new ApiError(404, "Email is required!");
+  }
+
+  if (!Password) {
+    throw new ApiError(404, "password is required!");
+  }
+
+  const user = await User.findOne({ Email });
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  const passwordValid = await user.isPasswordCorrect(Password);
+
+  if (!passwordValid) {
+    throw new ApiError(404, "Password is incorrect");
+  }
+
+  const accessToken = user.ACCESS_TOKEN();
+
+  const logedin = await User.findById(user._id).select(
+    "-Password -refreshToken",
+  );
+
+  const options = {
+    httpOnly: true,
+    secure: false,
+  };
+
+  return res
+    .status(200)
+    .cookie("accessToken", accessToken, options)
+    .json(
+      new Apiresponse(
+        200,
+        { logedin, accessToken },
+        "User logged in successfully",
+      ),
+    );
+});
+
+export { Register, Login };
