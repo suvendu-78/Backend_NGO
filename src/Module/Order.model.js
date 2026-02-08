@@ -23,6 +23,15 @@ const SchemaOrder = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    address: {
+      fullName: String,
+      phone: String,
+      city: String,
+      state: String,
+      pincode: String,
+      country: String,
+      street: String,
+    },
 
     status: {
       type: String,

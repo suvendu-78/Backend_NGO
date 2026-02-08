@@ -10,5 +10,5 @@ Data()
     });
   })
   .catch((error) => {
-    console.log("ERROR", error.message);
+    console.error("ERROR", error.message);
   });
