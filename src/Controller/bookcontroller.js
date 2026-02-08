@@ -1,7 +1,8 @@
 import { Book } from "../Module/Book.model.js";
+import Async from "../Utils/Async.js";
 
 // CREATE BOOK (ADMIN)
-const CreateBook = async (req, res) => {
+const CreateBook = Async(async (req, res) => {
   try {
     const { title, description, price } = req.body;
 
@@ -29,6 +30,6 @@ const CreateBook = async (req, res) => {
     console.log(error);
     res.status(500).json({ message: "Server Error" });
   }
-};
+});
 
 export default CreateBook;
