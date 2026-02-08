@@ -5,59 +5,46 @@ const UserSchema = new mongoose.Schema(
   {
     fullName: {
       type: String,
-      require: true,
+      required: true,
       lowercase: true,
     },
+
     Email: {
       type: String,
       required: true,
     },
+
     Mobile: {
       type: Number,
       required: true,
     },
+
     Password: {
       type: String,
       required: true,
     },
+
     role: {
       type: String,
       enum: ["user", "admin"],
       default: "user",
     },
+
     isActive: {
       type: Boolean,
       default: true,
     },
+
     avatar: {
       type: String,
     },
+
     createdByAdmin: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       default: null,
     },
-    description: {
-      type: String,
-    },
-    pdfUrl: {
-      type: String,
-    },
-    pdfPublicId: {
-      type: String,
-    },
-    price: {
-      type: Number,
-      default: 0,
-    },
-    uploadedBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
-    isPublished: {
-      type: Boolean,
-      default: false,
-    },
+
     Refresh_token: {
       type: String,
     },
