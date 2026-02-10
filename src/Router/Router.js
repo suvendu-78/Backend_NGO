@@ -7,6 +7,7 @@ import RequireAdmin from "../Controller/requireAdmin.js";
 import CreateBook from "../Controller/bookcontroller.js";
 import CreateOrder from "../Controller/order.controller.js";
 import upload from "../Middlewire/upload.middleware.js";
+import { Book } from "../Module/Book.model.js";
 
 const router = Router();
 
@@ -15,6 +16,23 @@ router.route("/login").post(Login);
 router.route("/createOrder").post(CreateOrder);
 // router.route("/updateOrderStatus").put(RequireAdmin, UpdateOrderStatus);
 router.put("/admin/order/:id", RequireAdmin, UpdateOrderStatus);
+// 🔥 GET ALL BOOKS (PUBLIC)
+router.get("/books", async (req, res) => {
+  try {
+    const books = await Book.find().sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      books,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+});
+
 router.route("/admin/upload-book").post(
   upload.fields([
     // RequireAdmin,
