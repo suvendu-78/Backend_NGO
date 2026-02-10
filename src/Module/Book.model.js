@@ -12,11 +12,19 @@ const BookSchema = new mongoose.Schema(
       type: String,
     },
 
+    // 📄 PDF
     pdfUrl: {
       type: String,
     },
-
     pdfPublicId: {
+      type: String,
+    },
+
+    // 🖼️ Book Cover Image
+    imageUrl: {
+      type: String,
+    },
+    imagePublicId: {
       type: String,
     },
 

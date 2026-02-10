@@ -1,35 +1,111 @@
-import { Book } from "../Module/Book.model.js";
-import Async from "../Utils/Async.js";
+// import fs from "fs";
+// import {
+//   uploadPdfToCloudinary,
+//   uploadImageToCloudinary,
+// } from "../Utils/cloudnary.js";
+// import { Book } from "../Module/Book.model.js";
 
-// CREATE BOOK (ADMIN)
-const CreateBook = Async(async (req, res) => {
+// const CreateBook = async (req, res) => {
+//   try {
+//     const pdfPath = req.files.pdf[0].path;
+//     const imagePath = req.files.image?.[0]?.path;
+
+//     console.log("Uploading PDF:", pdfPath);
+
+//     const pdfUpload = await uploadPdfToCloudinary(pdfPath);
+
+//     let imageUpload = null;
+//     if (imagePath) {
+//       console.log("Uploading Image:", imagePath);
+//       imageUpload = await uploadImageToCloudinary(imagePath);
+//     }
+
+//     // ✅ DELETE LOCAL FILES AFTER SUCCESS
+//     if (fs.existsSync(pdfPath)) fs.unlinkSync(pdfPath);
+//     if (imagePath && fs.existsSync(imagePath)) fs.unlinkSync(imagePath);
+
+//     const book = await Book.create({
+//       title,
+//       description,
+//       price,
+//       pdfUrl: pdfUpload.url,
+//       imageUrl: imageUpload?.url,
+//     });
+
+//     return res.json({
+//       success: true,
+//       pdfUrl: pdfUpload.url,
+//       imageUrl: imageUpload?.url,
+//     });
+//   } catch (error) {
+//     console.error("CreateBook Error:", error);
+
+//     return res.status(500).json({
+//       success: false,
+//       message: error.message,
+//     });
+//   }
+// };
+
+// export default CreateBook;
+
+import fs from "fs";
+import { Book } from "../Module/Book.model.js";
+import {
+  uploadPdfToCloudinary,
+  uploadImageToCloudinary,
+} from "../Utils/cloudnary.js";
+
+const CreateBook = async (req, res) => {
   try {
+    // ✅ FIX: extract fields from req.body
     const { title, description, price } = req.body;
 
-    // multer gives file here
-    const pdfFile = req.file;
-
-    if (!pdfFile) {
-      return res.status(400).json({ message: "PDF file is required" });
+    if (!title || !req.files?.pdf) {
+      return res.status(400).json({
+        success: false,
+        message: "Title and PDF are required",
+      });
     }
 
-    const newBook = await Book.create({
+    const pdfPath = req.files.pdf[0].path;
+    const imagePath = req.files.image?.[0]?.path;
+
+    // ⬆️ Upload to Cloudinary
+    const pdfUpload = await uploadPdfToCloudinary(pdfPath);
+
+    let imageUpload = null;
+    if (imagePath) {
+      imageUpload = await uploadImageToCloudinary(imagePath);
+    }
+
+    // 🧹 Delete local temp files
+    if (fs.existsSync(pdfPath)) fs.unlinkSync(pdfPath);
+    if (imagePath && fs.existsSync(imagePath)) fs.unlinkSync(imagePath);
+
+    // 💾 Save to MongoDB
+    const book = await Book.create({
       title,
       description,
       price,
-      pdfUrl: pdfFile.path, // local file path
-      uploadedBy: req.user._id, // comes from requireAdmin middleware
-      isPublished: true,
+      pdfUrl: pdfUpload.url,
+      pdfPublicId: pdfUpload.publicId,
+      imageUrl: imageUpload?.url,
+      imagePublicId: imageUpload?.publicId,
     });
 
-    res.status(201).json({
+    return res.status(201).json({
+      success: true,
       message: "Book uploaded successfully",
-      book: newBook,
+      book,
     });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Server Error" });
+    console.error("CreateBook Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
-});
+};
 
 export default CreateBook;
