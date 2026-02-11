@@ -47,6 +47,13 @@ const BookSchema = new mongoose.Schema(
       type: String,
       default: "Draft",
     },
+    author: {
+      type: String,
+    },
+
+    imei: {
+      type: String,
+    },
   },
   { timestamps: true },
 );

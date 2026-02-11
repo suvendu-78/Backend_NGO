@@ -59,7 +59,7 @@ import {
 const CreateBook = async (req, res) => {
   try {
     // ✅ FIX: extract fields from req.body
-    const { title, description, price } = req.body;
+    const { title, description, price, author, imei } = req.body;
 
     if (!title || !req.files?.pdf) {
       return res.status(400).json({
@@ -88,6 +88,8 @@ const CreateBook = async (req, res) => {
       title,
       description,
       price,
+      imei,
+      author,
       pdfUrl: pdfUpload.url,
       pdfPublicId: pdfUpload.publicId,
       imageUrl: imageUpload?.url,
