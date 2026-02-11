@@ -66,10 +66,6 @@ dotenv.config();
 
 const app = express();
 
-/* =======================
-   MIDDLEWARES
-======================= */
-
 app.use(
   cors({
     origin: "http://localhost:5173",
@@ -83,16 +79,7 @@ app.use(express.json({ limit: "10kb" }));
 // Clerk middleware
 app.use(clerkMiddleware());
 
-/* =======================
-   ROUTES
-======================= */
-
-// 🔥 IMPORTANT FIX
 app.use("/api/v1/user", router);
-
-/* =======================
-   HEALTH CHECK
-======================= */
 
 app.get("/", (req, res) => {
   res.json({
@@ -100,10 +87,6 @@ app.get("/", (req, res) => {
     message: "Backend running with Clerk 🚀",
   });
 });
-
-/* =======================
-   PROTECTED TEST ROUTE
-======================= */
 
 app.get("/api/protected", requireAuth(), (req, res) => {
   res.json({

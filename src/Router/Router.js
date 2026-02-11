@@ -8,7 +8,7 @@ import CreateBook from "../Controller/bookcontroller.js";
 import CreateOrder from "../Controller/order.controller.js";
 import upload from "../Middlewire/upload.middleware.js";
 import { Book } from "../Module/Book.model.js";
-
+import { requireAuth } from "@clerk/express";
 const router = Router();
 
 router.route("/register").post(Register);
@@ -32,7 +32,7 @@ router.get("/books", async (req, res) => {
     });
   }
 });
-
+router.post("/order/create", requireAuth(), CreateOrder);
 router.route("/admin/upload-book").post(
   upload.fields([
     // RequireAdmin,
