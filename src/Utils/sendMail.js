@@ -4,17 +4,19 @@ const SendMail = async ({ to, subject, html }) => {
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: process.env.ADMIN_EMAIL,
+      user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
     },
   });
 
-  await transporter.sendMail({
-    from: `"Book Store" <${process.env.ADMIN_EMAIL}>`,
+  const info = await transporter.sendMail({
+    from: `"Book Store" <${process.env.EMAIL_USER}>`,
     to,
     subject,
     html,
   });
+
+  return info; // ⭐ ADD THIS LINE
 };
 
 export default SendMail;

@@ -12,11 +12,19 @@ const BookSchema = new mongoose.Schema(
       type: String,
     },
 
+    // 📄 PDF
     pdfUrl: {
       type: String,
     },
-
     pdfPublicId: {
+      type: String,
+    },
+
+    // 🖼️ Book Cover Image
+    imageUrl: {
+      type: String,
+    },
+    imagePublicId: {
       type: String,
     },
 
@@ -38,6 +46,13 @@ const BookSchema = new mongoose.Schema(
     status: {
       type: String,
       default: "Draft",
+    },
+    author: {
+      type: String,
+    },
+
+    imei: {
+      type: String,
     },
   },
   { timestamps: true },

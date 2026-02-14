@@ -1,12 +1,17 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { clerkMiddleware, requireAuth } from "@clerk/express";
+// import { clerkMiddleware, requireAuth } from "@clerk/express";
+
+import { router } from "./Router/Router.js";
 
 dotenv.config();
 
 const app = express();
 
+// app.set("trust proxy", 1);
+
+// CORS
 app.use(
   cors({
     origin: "http://localhost:5173",
@@ -17,40 +22,31 @@ app.use(
 
 app.use(express.json({ limit: "10kb" }));
 
-app.use(clerkMiddleware());
-import { router } from "./Router/Router.js";
+// Clerk middleware
+// app.use(clerkMiddleware({}));
+
 app.use("/api/v1/user", router);
+
+// app.get("/", (req, res) => {
+//   res.json({
+//     success: true,
+//     message: "Backend running with Clerk 🚀",
+//   });
+// });
 
 app.get("/", (req, res) => {
   res.json({
     success: true,
-    message: "Backend running with Clerk 🚀",
+    message: "🔥 ROOT ROUTE CALLED 🔥",
   });
 });
 
-app.get("/api/protected", requireAuth(), (req, res) => {
+app.get("/api/protected", (req, res) => {
   res.json({
     success: true,
-    message: "You are authenticated",
+    message: "You are authenticated ✅",
     userId: req.auth.userId,
   });
-});
-
-app.get("/api/admin/books", requireAuth(), async (req, res) => {
-  try {
-    const userId = req.auth.userId;
-
-    res.json({
-      success: true,
-      message: "Admin Books Route",
-      userId,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
 });
 
 export default app;

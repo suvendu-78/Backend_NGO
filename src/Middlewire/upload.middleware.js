@@ -1,28 +1,35 @@
 import multer from "multer";
 import fs from "fs";
+import path from "path";
 
-// create folder automatically if not exists
-const uploadPath = "/tmp/my-uploads";
+// TEMP FOLDER
+const uploadPath = path.join(process.cwd(), "public", "temt");
 
 if (!fs.existsSync(uploadPath)) {
   fs.mkdirSync(uploadPath, { recursive: true });
 }
 
-// STORAGE CONFIG
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
+  destination: (req, file, cb) => {
     cb(null, uploadPath);
   },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-
-    cb(null, file.fieldname + "-" + uniqueSuffix);
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + "-" + file.originalname);
   },
 });
 
-// MULTER INSTANCE
-const Uploadfile = multer({
-  storage: storage,
-});
+// ALLOW PDF + IMAGE
+const fileFilter = (req, file, cb) => {
+  if (
+    file.mimetype === "application/pdf" ||
+    file.mimetype.startsWith("image/")
+  ) {
+    cb(null, true);
+  } else {
+    cb(new Error("Only PDF & Image allowed"), false);
+  }
+};
 
-export default Uploadfile;
+const upload = multer({ storage, fileFilter });
+
+export default upload;

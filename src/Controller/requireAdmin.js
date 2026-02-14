@@ -1,38 +1,74 @@
+import { Admin } from "../Module/Admin.model.js";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
-
-import { requireAuth, clerkClient } from "@clerk/express";
-
-const RequireAdmin = async (req, res, next) => {
+// 🔐 REGISTER ADMIN
+export const registerAdmin = async (req, res) => {
   try {
-    //  make sure user is logged in (Clerk)
-    requireAuth()(req, res, async () => {
-      const clerkUserId = req.auth.userId;
+    const { fullName, email, password, adminCode } = req.body;
 
-      //  get user from Clerk
-      const user = await clerkClient.users.getUser(clerkUserId);
+    // check admin secret code
+    if (adminCode !== process.env.ADMIN_SECRET_CODE) {
+      return res.status(403).json({
+        message: "Invalid Admin Secret Code",
+      });
+    }
 
-      // check admin role from Clerk metadata
-      const role = user.publicMetadata?.role;
+    const exist = await Admin.findOne({ email });
+    if (exist) {
+      return res.status(400).json({ message: "Admin already exists" });
+    }
 
-      if (role !== "admin") {
-        return res.status(403).json({
-          success: false,
-          message: "Admin access only",
-        });
-      }
+    const hashed = await bcrypt.hash(password, 10);
 
-      // attach clerk user
-      req.user = user;
-
-      next();
+    const admin = await Admin.create({
+      fullName,
+      email,
+      password: hashed,
     });
-  } catch (error) {
-    console.log(error);
-    res.status(401).json({
-      success: false,
-      message: "Unauthorized",
+
+    res.status(201).json({
+      message: "Admin Registered Successfully",
     });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 };
 
-export default RequireAdmin;
+// 🔐 LOGIN ADMIN
+export const loginAdmin = async (req, res) => {
+  try {
+    const { email, password, adminCode } = req.body;
+
+    // verify secret code
+    if (adminCode !== process.env.ADMIN_SECRET_CODE) {
+      return res.status(403).json({
+        message: "Invalid Admin Code",
+      });
+    }
+
+    const admin = await Admin.findOne({ email });
+    if (!admin) {
+      return res.status(404).json({ message: "Admin not found" });
+    }
+
+    const match = await bcrypt.compare(password, admin.password);
+    if (!match) {
+      return res.status(400).json({ message: "Wrong password" });
+    }
+
+    // generate JWT
+    const token = jwt.sign(
+      { id: admin._id, role: "admin" },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.ACCESS_TOKEN_EXPIRY },
+    );
+
+    res.json({
+      message: "Admin Login Success",
+      token,
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
