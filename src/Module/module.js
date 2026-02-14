@@ -68,7 +68,7 @@ UserSchema.methods.isPasswordCorrect = async function (password) {
   return compair;
 };
 
-UserSchema.methods.ACCESS_TOKEN = async function () {
+UserSchema.methods.ACCESS_TOKEN = function () {
   return jwt.sign(
     {
       _id: this._id,
@@ -82,13 +82,13 @@ UserSchema.methods.ACCESS_TOKEN = async function () {
   );
 };
 
-UserSchema.methods.REFRESH_TOKEN = async function () {
+UserSchema.methods.REFRESH_TOKEN = function () {
   return jwt.sign(
     {
       _id: this._id,
       Email: this.Email,
     },
-    process.env.Refresh__TOKEN,
+    process.env.REFRESH_TOKEN,
     {
       expiresIn: process.env.Refresh_TOKEN_EXPIRY,
     },

@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { clerkMiddleware, requireAuth } from "@clerk/express";
+// import { clerkMiddleware, requireAuth } from "@clerk/express";
 
 import { router } from "./Router/Router.js";
 
@@ -9,7 +9,7 @@ dotenv.config();
 
 const app = express();
 
-app.set("trust proxy", 1);
+// app.set("trust proxy", 1);
 
 // CORS
 app.use(
@@ -23,7 +23,7 @@ app.use(
 app.use(express.json({ limit: "10kb" }));
 
 // Clerk middleware
-app.use(clerkMiddleware({}));
+// app.use(clerkMiddleware({}));
 
 app.use("/api/v1/user", router);
 
@@ -34,14 +34,14 @@ app.use("/api/v1/user", router);
 //   });
 // });
 
-// app.get("/", (req, res) => {
-//   res.json({
-//     success: true,
-//     message: "🔥 ROOT ROUTE CALLED 🔥",
-//   });
-// });
+app.get("/", (req, res) => {
+  res.json({
+    success: true,
+    message: "🔥 ROOT ROUTE CALLED 🔥",
+  });
+});
 
-app.get("/api/protected", requireAuth(), (req, res) => {
+app.get("/api/protected", (req, res) => {
   res.json({
     success: true,
     message: "You are authenticated ✅",

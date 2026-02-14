@@ -115,7 +115,7 @@ import mongoose from "mongoose";
 const OrderSchema = new mongoose.Schema(
   {
     user: {
-      type: String, // Clerk userId is string
+      type: String,
       required: true,
     },
 
