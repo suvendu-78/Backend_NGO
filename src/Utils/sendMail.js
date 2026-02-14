@@ -1,37 +1,16 @@
-// import nodemailer from "nodemailer";
-
-// const SendMail = async ({ to, subject, html }) => {
-//   const transporter = nodemailer.createTransport({
-//     service: "gmail",
-//     auth: {
-//       user: process.env.ADMIN_EMAIL,
-//       pass: process.env.EMAIL_PASS,
-//     },
-//   });
-
-//   await transporter.sendMail({
-//     from: `"Book Store" <${process.env.ADMIN_EMAIL}>`,
-//     to,
-//     subject,
-//     html,
-//   });
-// };
-
-// export default SendMail;
-
 import nodemailer from "nodemailer";
 
 const SendMail = async ({ to, subject, html }) => {
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: process.env.ADMIN_EMAIL,
+      user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
     },
   });
 
   const info = await transporter.sendMail({
-    from: `"Book Store" <${process.env.ADMIN_EMAIL}>`,
+    from: `"Book Store" <${process.env.EMAIL_USER}>`,
     to,
     subject,
     html,
