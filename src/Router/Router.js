@@ -59,4 +59,24 @@ router.get("/books", async (req, res) => {
   }
 });
 
+// EBOOK only
+router.get("/ebooks", async (req, res) => {
+  const books = await Book.find({ type: "ebook" }).sort({ createdAt: -1 });
+
+  res.json({
+    success: true,
+    books,
+  });
+});
+
+// PHYSICAL BOOK only
+router.get("/physical-books", async (req, res) => {
+  const books = await Book.find({ type: "book" }).sort({ createdAt: -1 });
+
+  res.json({
+    success: true,
+    books,
+  });
+});
+
 export { router };

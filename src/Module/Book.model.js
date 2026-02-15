@@ -19,6 +19,11 @@ const BookSchema = new mongoose.Schema(
     pdfPublicId: {
       type: String,
     },
+    type: {
+      type: String,
+      enum: ["ebook", "book"],
+      required: true,
+    },
 
     // 🖼️ Book Cover Image
     imageUrl: {
