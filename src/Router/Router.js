@@ -9,7 +9,7 @@ import { registerAdmin, loginAdmin } from "../Controller/requireAdmin.js";
 
 import { RequireAdmin } from "../Middlewire/adminmiddlewire.js";
 import { verifyToken } from "../Middlewire/user.middlewire.js";
-
+import GetAllOrders from "../Controller/ordergetall.js";
 const router = Router();
 
 router.post("/register", Register);
@@ -21,6 +21,8 @@ router.post("/loginAdmin", loginAdmin);
 router.post("/order/create", verifyToken, CreateOrder);
 
 router.put("/admin/order/:id", verifyToken, RequireAdmin, UpdateOrderStatus);
+
+router.get("/admin/orders", verifyToken, RequireAdmin, GetAllOrders);
 
 router.post(
   "/admin/upload-book",
