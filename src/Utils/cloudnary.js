@@ -10,11 +10,20 @@ export const uploadPdfToCloudinary = async (localPath) => {
   try {
     console.log("Uploading PDF:", localPath);
 
+    // const result = await cloudinary.uploader.upload(localPath, {
+    //   resource_type: "raw",
+    //   folder: "books/pdfs",
+    //   // use_filename: true,
+    //   // unique_filename: true,
+    // });
+
     const result = await cloudinary.uploader.upload(localPath, {
       resource_type: "raw",
+      // resource_type: "image",
       folder: "books/pdfs",
-      // use_filename: true,
-      // unique_filename: true,
+      // flags: "attachment:false", // 🔥 IMPORTANT
+      // type: "upload",
+      access_mode: "public",
     });
 
     console.log("PDF Uploaded:", result.secure_url);
