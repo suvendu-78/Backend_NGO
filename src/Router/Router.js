@@ -66,7 +66,6 @@ router.get("/books", async (req, res) => {
     });
   }
 });
-
 router.get("/ebooks", async (req, res) => {
   const books = await Book.find({ type: "ebook" }).sort({ createdAt: -1 });
 
