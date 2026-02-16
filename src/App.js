@@ -3,6 +3,8 @@ import cors from "cors";
 import dotenv from "dotenv";
 // import { clerkMiddleware, requireAuth } from "@clerk/express";
 
+
+
 import { router } from "./Router/Router.js";
 
 dotenv.config();
@@ -34,12 +36,6 @@ app.use("/api/v1/user", router);
 //   });
 // });
 
-app.get("/", (req, res) => {
-  res.json({
-    success: true,
-    message: "🔥 ROOT ROUTE CALLED 🔥",
-  });
-});
 
 app.get("/api/protected", (req, res) => {
   res.json({

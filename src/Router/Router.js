@@ -10,6 +10,8 @@ import { registerAdmin, loginAdmin } from "../Controller/requireAdmin.js";
 import { RequireAdmin } from "../Middlewire/adminmiddlewire.js";
 import { verifyToken } from "../Middlewire/user.middlewire.js";
 import GetAllOrders from "../Controller/ordergetall.js";
+import { createRazorpayOrder } from "../Controller/payment.controller.js";
+import GetMyOrders from "../Controller/getMyOrders.controller.js";
 const router = Router();
 
 router.post("/register", Register);
@@ -17,12 +19,18 @@ router.post("/login", Login);
 router.post("/adminregister", registerAdmin);
 router.post("/loginAdmin", loginAdmin);
 
+
+// Razorpay Payment Route
+router.post("/payment/create-order", verifyToken, createRazorpayOrder);
 // user order
 router.post("/order/create", verifyToken, CreateOrder);
 
 router.put("/admin/order/:id", verifyToken, RequireAdmin, UpdateOrderStatus);
 
 router.get("/admin/orders", verifyToken, RequireAdmin, GetAllOrders);
+
+//order history
+router.get("/my-orders", verifyToken, GetMyOrders);
 
 router.post(
   "/admin/upload-book",
@@ -57,6 +65,25 @@ router.get("/books", async (req, res) => {
       message: error.message,
     });
   }
+});
+
+router.get("/ebooks", async (req, res) => {
+  const books = await Book.find({ type: "ebook" }).sort({ createdAt: -1 });
+
+  res.json({
+    success: true,
+    books,
+  });
+});
+
+// PHYSICAL BOOK only
+router.get("/physical-books", async (req, res) => {
+  const books = await Book.find({ type: "book" }).sort({ createdAt: -1 });
+
+  res.json({
+    success: true,
+    books,
+  });
 });
 
 export { router };

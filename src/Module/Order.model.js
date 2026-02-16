@@ -146,6 +146,10 @@ const OrderSchema = new mongoose.Schema(
       type: String,
     },
 
+    deliveryDate: {
+      type: Date,
+    },
+
     address: {
       fullName: String,
       phone: String,
