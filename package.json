@@ -22,6 +22,7 @@
     "multer": "^2.0.2",
     "nodemailer": "^8.0.0",
     "nodemon": "^3.1.11",
+    "paytmchecksum": "^1.5.1",
     "razorpay": "^2.9.6"
   }
 }
