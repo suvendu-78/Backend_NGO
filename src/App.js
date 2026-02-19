@@ -16,7 +16,7 @@ const app = express();
 // CORS
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "https://samyogeesahityasansada.com",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
   }),
