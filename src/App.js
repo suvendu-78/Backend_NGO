@@ -22,9 +22,9 @@ app.use(
   }),
 );
 
-app.use(express.json({ limit: "50kb" }));
+app.use(express.json({ limit: "50Mb" }));
 
-
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 // Clerk middleware
 // app.use(clerkMiddleware({}));
 
