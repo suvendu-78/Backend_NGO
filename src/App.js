@@ -16,7 +16,8 @@ const app = express();
 // CORS
 app.use(
   cors({
-    origin: "https://samyogeesahityasansada.com",
+    origin: ["https://samyogeesahityasansada.com",
+  "https://www.samyogeesahityasansada.com"],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
   }),
